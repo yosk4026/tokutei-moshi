@@ -54,6 +54,7 @@ td,th{border-bottom:1px solid var(--line);padding:4px 14px 4px 0;text-align:left
 <div class="bar">
   <b>令和8年度 特定行政書士考査</b>
   <span class="cnt" id="count"></span>
+  <button id="reset2" style="display:none">最初からやり直す</button>
 </div>
 <h1>令和8年度 特定行政書士考査　解答・解説</h1>
 <div class="notice"><p><b>個人が作成した非公式の解答・解説です。</b>日本行政書士会連合会その他の団体とは関係がありません。</p><ul><li><b>正答は公式発表前の暫定です。</b>公式の正答は、日本行政書士会連合会の発表で必ず確かめてください。</li><li><b>判断があいまいな問があります。</b>問7（肢アの読み方）と問26（肢2の「疑っていた」の扱い）は、解釈によって正答が変わる余地があり、どちらも別の読み方では正答が2になります。該当する肢の解説に⚠️で注記しています。</li><li>問題文は掲載していません。お手元の問題冊子と照らしてお使いください。</li><li>法令は考査日（2026年10月18日）時点のものによっています。条文の引用は e-Gov の条文と照合していますが、誤りを含む可能性があります。</li><li>内容についての個別の質問にはお答えできません。</li></ul></div>
@@ -66,6 +67,7 @@ td,th{border-bottom:1px solid var(--line);padding:4px 14px 4px 0;text-align:left
 </div>
 <div class="row" style="margin-top:16px">
   <button id="send">採点する</button>
+  <button id="reset3" style="display:none">最初からやり直す</button>
   <span class="err" id="err"></span>
 </div>
 </div>
@@ -130,6 +132,8 @@ function summary(){
   $('count').textContent=st.done?'採点済み':'選択済み '+k+' / '+N;
   $('sum').textContent=lines().join('\n');
   $('send').style.display=st.done?'none':'';
+  $('reset2').style.display=st.done?'':'none';
+  $('reset3').style.display=st.done?'':'none';
   $('lead').style.display=st.done?'none':'';
   $('err').textContent='';
 }
@@ -150,11 +154,14 @@ function result(){
   var b1=el('button','',onlyNg?'全問を表示':'落とした問だけ表示');
   b1.addEventListener('click',function(){onlyNg=!onlyNg;result();render();});
   var b3=el('button','','最初からやり直す');
-  b3.addEventListener('click',function(){if(!confirm('選んだ番号をすべて消して、最初からやり直しますか。'))return;
-    try{localStorage.removeItem(KEY);}catch(e){}location.reload();});
+  b3.addEventListener('click',doReset);
   if(ng.length)row.appendChild(b1);row.appendChild(b3);
   r.appendChild(row);box.appendChild(r);
 }
+function doReset(){if(!confirm('選んだ番号をすべて消して、最初からやり直しますか。'))return;
+  try{localStorage.removeItem(KEY);}catch(e){}location.reload();}
+$('reset2').addEventListener('click',doReset);
+$('reset3').addEventListener('click',doReset);
 $('send').addEventListener('click',function(){
   var miss=[];st.a.forEach(function(a,i){if(!a)miss.push(Q[i].n);});
   if(miss.length){$('err').textContent='未選択：問'+miss.join('、');return;}
